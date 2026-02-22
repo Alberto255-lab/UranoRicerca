@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URANO 3D RICERCA SCIENZE</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border-left: 8px solid #ffaa00;
+            pointer-events: none;
+            z-index: 100;
+            font-size: 1.1rem;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255,200,100,0.3);
+        }
+        
+        /* PANNELLO CONTROLLI */
+        .controls-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 8, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid #3d8cff;
+            border-radius: 40px;
+            padding: 20px;
+            width: 260px;
+            pointer-events: auto;
+            z-index: 200;
+            color: white;
+        }
+        
+        .panel-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #b0e0ff;
+        }
+        
+        .info-text {
+            font-size: 1rem;
+            color: #ffd966;
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            background: #1a3350;
+            border-radius: 30px;
+        }
+        
+        /* PANNELLO ANIMAZIONI */
+        .anim-panel {
+            position: absolute;
+            right: 20px;
+            top: 80px;
+            width: 280px;
+            background: rgba(0, 8, 20, 0.95);
+            backdrop-filter: blur(15px);
+            border: 2px solid #ff9933;
+            border-radius: 40px;
+            padding: 20px;
+            color: white;
+            z-index: 200;
+            pointer-events: auto;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .anim-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffaa66;
+            text-align: center;
+        }
+        
+        .anim-btn {
+            margin: 10px 0;
+            background: #112a40;
+            padding: 15px;
+            border-radius: 40px;
+            border-left: 6px solid #ffaa66;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #ffcc99;
+            transition: 0.2s;
+        }
+        
+        .anim-btn:hover {
+            background: #1a3a55;
+            transform: scale(1.02);
+            box-shadow: 0 0 15px #ffaa33;
+        }
+        
+        /* PULSANTE STORIA */
+        .story-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 320px;
+            background: #1b3b5c;
+            border: 3px solid #60a0ff;
+            padding: 15px 35px;
+            border-radius: 60px;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 200;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        
+        /* TOOLTIP */
+        #tooltip {
+            position: absolute;
+            background: #011c2f;
+            border-left: 10px solid #3da0ff;
+            padding: 15px 30px;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            color: white;
+            z-index: 1000;
+            pointer-events: none;
+            max-width: 400px;
+            white-space: pre-line;
+            transition: opacity 0.2s;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* MODALE STORIA */
+        .story-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+        }
+        
+        .story-stage {
+            width: 95vw;
+            height: 90vh;
+            background: #030614;
+            border-radius: 80px;
+            border: 4px solid #5aa9ff;
+            box-shadow: 0 0 150px #004488;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .story-canvas-area {
+            flex: 1;
+            position: relative;
+            background: #030614;
+        }
+        
+        #storyCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .story-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #0a1a2f;
+            border-top: 4px solid #3a6a9a;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .story-nav-btn {
+            background: #1f4970;
+            border: 3px solid #8ac2ff;
+            color: white;
+            font-size: 3rem;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .story-nav-btn:hover {
+            background: #2f6ba0;
+            transform: scale(1.1);
+        }
+        
+        #closeStoryBtn {
+            background: #aa3344;
+            border: 2px solid #ff8888;
+            padding: 15px 60px;
+            border-radius: 60px;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">🌌 URANO 3D RICERCA SCIENZE</div>
+    
+    <!-- PANNELLO CONTROLLI -->
+    <div class="controls-panel">
+        <div class="panel-title">⚡ VELOCITÀ REALI</div>
+        <div class="info-text">🔄 ROTAZIONE: 17h 14m (fissa)</div>
+        <div class="info-text">🌍 RIVOLUZIONE: 84 anni (fissa)</div>
+        <div class="info-text" style="margin-top:15px;">⏱️ I moti seguono i tempi reali</div>
+    </div>
+    
+    <!-- PANNELLO ANIMAZIONI -->
+    <div class="anim-panel">
+        <div class="anim-title">🎬 ANIMAZIONI SCIENTIFICHE</div>
+        <div class="anim-btn" id="btnVita">🦠 VITA MICROBICA</div>
+        <div class="anim-btn" id="btnAnelli">💎 ANELLI DI GHIACCIO</div>
+        <div class="anim-btn" id="btnOceano">🌊 OCEANO SOTTERRANEO</div>
+        <div class="anim-btn" id="btnVulcani">🌋 VULCANI</div>
+        <div class="anim-btn" id="btnRocce">🪨 TIPI DI ROCCIA</div>
+    </div>
+    
+    <!-- PULSANTE STORIA -->
+    <div class="story-btn" id="storyLauncher">📖 MODALITÀ STORIA</div>
+    
+    <!-- TOOLTIP -->
+    <div id="tooltip" class="hidden"></div>
+
+    <!-- MODALE STORIA -->
+    <div id="storyModal" class="story-modal hidden">
+        <div class="story-stage">
+            <div class="story-canvas-area">
+                <canvas id="storyCanvas" width="1400" height="700"></canvas>
+            </div>
+            <div class="story-footer">
+                <div class="nav-buttons">
+                    <button class="story-nav-btn" id="storyPrev">◀</button>
+                    <button class="story-nav-btn" id="storyNext">▶</button>
+                </div>
+                <button id="closeStoryBtn">✖ CHIUDI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // --- INIZIALIZZAZIONE 3D ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x030614);
+        
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 20, 40);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = false;
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+        
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.left = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+        controls.enableZoom = true;
+        controls.maxDistance = 100;
+        controls.target.set(0, 0, 0);
+        
+        // Luci
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+        
+        const sunLight = new THREE.PointLight(0xffdd99, 2, 100);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(10, 20, 5);
+        scene.add(dirLight);
+        
+        const fillLight1 = new THREE.PointLight(0x446688, 0.8, 50);
+        fillLight1.position.set(10, 10, 20);
+        scene.add(fillLight1);
+        
+        const fillLight2 = new THREE.PointLight(0x886644, 0.5, 50);
+        fillLight2.position.set(-20, 5, -20);
+        scene.add(fillLight2);
+        
+        // Stelle
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 4000;
+        const starsPositions = new Float32Array(starsCount * 3);
+        for (let i = 0; i < starsCount * 3; i += 3) {
+            starsPositions[i] = (Math.random() - 0.5) * 500;
+            starsPositions[i+1] = (Math.random() - 0.5) * 500;
+            starsPositions[i+2] = (Math.random() - 0.5) * 500;
+        }
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15 });
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+
+        // SOLE
+        const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
+        const sunMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffaa33,
+            emissive: 0xff5500,
+            emissiveIntensity: 1.5,
+            roughness: 0.3
+        });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        scene.add(sun);
+        
+        const sunGlowGeometry = new THREE.SphereGeometry(3.2, 32, 32);
+        const sunGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff6600,
+            transparent: true,
+            opacity: 0.3
+        });
+        const sunGlow = new THREE.Mesh(sunGlowGeometry, sunGlowMaterial);
+        sun.add(sunGlow);
+        
+        const sunDiv = document.createElement('div');
+        sunDiv.textContent = '☀️ SOLE';
+        sunDiv.style.color = '#ffaa33';
+        sunDiv.style.fontSize = '24px';
+        sunDiv.style.fontWeight = 'bold';
+        sunDiv.style.textShadow = '2px 2px 4px black';
+        sunDiv.style.backgroundColor = 'rgba(0,0,0,0.6)';
+        sunDiv.style.padding = '4px 12px';
+        sunDiv.style.borderRadius = '20px';
+        sunDiv.style.border = '1px solid #ffaa33';
+        const sunLabel = new CSS2DObject(sunDiv);
+        sunLabel.position.set(0, 4, 0);
+        sun.add(sunLabel);
+
+        // PIANETI
+        const planetsInfo = [
+            { name: 'MERCURIO', color: 0xaaaaaa, size: 0.8, distance: 6, speed: 0.04, emissive: 0x333333, distReale: '77 milioni km' },
+            { name: 'VENERE', color: 0xffcc88, size: 0.9, distance: 9, speed: 0.025, emissive: 0x442200, distReale: '108 milioni km' },
+            { name: 'TERRA', color: 0x2288ff, size: 1, distance: 12, speed: 0.015, emissive: 0x112244, distReale: '150 milioni km' },
+            { name: 'MARTE', color: 0xff6633, size: 0.85, distance: 15, speed: 0.012, emissive: 0x331100, distReale: '228 milioni km' },
+            { name: 'GIOVE', color: 0xddbb99, size: 2.2, distance: 19, speed: 0.008, emissive: 0x332211, distReale: '778 milioni km' },
+            { name: 'SATURNO', color: 0xeeddbb, size: 1.9, distance: 24, speed: 0.006, emissive: 0x332211, distReale: '1.43 miliardi km' },
+            { name: 'URANO', color: 0x88ccff, size: 1.6, distance: 29, speed: 0.004, emissive: 0x113355, distReale: '2.87 miliardi km' },
+            { name: 'NETTUNO', color: 0x3366ff, size: 1.6, distance: 34, speed: 0.003, emissive: 0x112244, distReale: '4.5 miliardi km' }
+        ];
+        
+        const planets = [];
+        
+        planetsInfo.forEach((info) => {
+            const geometry = new THREE.SphereGeometry(info.size, 48, 48);
+            const material = new THREE.MeshStandardMaterial({
+                color: info.color,
+                emissive: info.emissive,
+                emissiveIntensity: 0.2,
+                roughness: 0.4,
+                metalness: 0.1
+            });
+            const planet = new THREE.Mesh(geometry, material);
+            
+            planet.position.x = info.distance;
+            
+            planet.userData = {
+                name: info.name,
+                distance: info.distance,
+                speed: info.speed,
+                angle: Math.random() * Math.PI * 2,
+                distReale: info.distReale
+            };
+            
+            scene.add(planet);
+            
+            const div = document.createElement('div');
+            div.textContent = info.name;
+            div.style.color = 'white';
+            div.style.fontSize = '20px';
+            div.style.fontWeight = 'bold';
+            div.style.textShadow = '2px 2px 4px black';
+            div.style.backgroundColor = 'rgba(0,0,0,0.6)';
+            div.style.padding = '4px 12px';
+            div.style.borderRadius = '20px';
+            div.style.border = '1px solid ' + info.color;
+            const label = new CSS2DObject(div);
+            label.position.set(0, info.size + 1, 0);
+            planet.add(label);
+            
+            if (info.name === 'SATURNO') {
+                const ringGeometry = new THREE.TorusGeometry(info.size * 1.8, 0.3, 16, 100);
+                const ringMaterial = new THREE.MeshStandardMaterial({ 
+                    color: 0xccaa88, 
+                    emissive: 0x332211, 
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                ring.rotation.x = Math.PI / 2;
+                ring.rotation.z = 0.3;
+                planet.add(ring);
+            }
+            
+            planets.push(planet);
+        });
+
+        const uranus = planets.find(p => p.userData.name === 'URANO');
+        
+        // Orbite
+        planetsInfo.forEach(info => {
+            const points = [];
+            const radius = info.distance;
+            for (let i = 0; i <= 64; i++) {
+                const angle = (i / 64) * Math.PI * 2;
+                points.push(new THREE.Vector3(
+                    Math.cos(angle) * radius,
+                    0,
+                    Math.sin(angle) * radius
+                ));
+            }
+            const orbitGeometry = new THREE.BufferGeometry().setFromPoints(points);
+            const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x446688, opacity: 0.3, transparent: true });
+            const orbitLine = new THREE.LineLoop(orbitGeometry, orbitMaterial);
+            scene.add(orbitLine);
+        });
+
+        // ANIMAZIONE 3D
+        let clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const delta = clock.getDelta();
+            
+            planets.forEach(planet => {
+                planet.rotation.y += 0.01 * delta * 30;
+            });
+            
+            planets.forEach(planet => {
+                const data = planet.userData;
+                data.angle += data.speed * delta * 10;
+                planet.position.x = Math.cos(data.angle) * data.distance;
+                planet.position.z = Math.sin(data.angle) * data.distance;
+            });
+            
+            sun.rotation.y += 0.002 * delta * 30;
+            
+            controls.update();
+            
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+        
+        animate();
+
+        // CLICK SU PIANETI (tooltip Urano si chiude solo al secondo clic)
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let uranusTooltipVisible = false;
+        let currentUranusTooltipX = 0;
+        let currentUranusTooltipY = 0;
+
+        renderer.domElement.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            
+            const objects = [sun, ...planets];
+            const intersects = raycaster.intersectObjects(objects);
+            
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                
+                if (hit === sun) {
+                    showTooltipTemp('☀️ SOLE\nTemperatura: 15 milioni °C (nucleo)\nDistanza da Urano: 2.9 miliardi km', event.clientX, event.clientY);
+                } else {
+                    const planetName = hit.userData.name;
+                    if (planetName === 'URANO') {
+                        // Toggle per Urano
+                        if (uranusTooltipVisible) {
+                            hideTooltip();
+                            uranusTooltipVisible = false;
+                        } else {
+                            currentUranusTooltipX = event.clientX;
+                            currentUranusTooltipY = event.clientY;
+                            showUranusTooltip(event.clientX, event.clientY);
+                            uranusTooltipVisible = true;
+                        }
+                    } else {
+                        showTooltipTemp(`${planetName}\n\nDistanza dal Sole: ${hit.userData.distReale}`, event.clientX, event.clientY);
+                    }
+                }
+            }
+        });
+
+        // Aggiorna posizione tooltip di Urano mentre si muove (ogni frame)
+        function updateUranusTooltipPosition() {
+            if (uranusTooltipVisible && uranus) {
+                // Aggiorna posizione del tooltip seguendo Urano
+                const vector = new THREE.Vector3();
+                uranus.getWorldPosition(vector);
+                vector.project(camera);
+                
+                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
+                
+                const tooltip = document.getElementById('tooltip');
+                tooltip.style.left = (x - 200) + 'px';
+                tooltip.style.top = (y - 250) + 'px';
+            }
+            requestAnimationFrame(updateUranusTooltipPosition);
+        }
+        updateUranusTooltipPosition();
+
+        function showUranusTooltip(x, y) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.innerHTML = '🪐 URANO\n\nROTAZIONE: 17h 14m\nRIVOLUZIONE: 84 anni\nASSE: 98° (inclinato)\n\n🔬 COMPOSIZIONE:\n• Atmosfera: H₂ 82%, He 15%, CH₄ 2.3%\n• Mantello: ghiacci (acqua, ammoniaca)\n• Nucleo: roccia e metallo (5000°C)\n\nℹ️ Clicca di nuovo per chiudere'.replace(/\n/g, '<br>');
+            tooltip.style.left = (x - 200) + 'px';
+            tooltip.style.top = (y - 250) + 'px';
+            tooltip.classList.remove('hidden');
+        }
+        
+        function showTooltipTemp(text, x, y) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.innerHTML = text.replace(/\n/g, '<br>');
+            tooltip.style.left = (x - 200) + 'px';
+            tooltip.style.top = (y - 150) + 'px';
+            tooltip.classList.remove('hidden');
+            
+            setTimeout(() => {
+                tooltip.classList.add('hidden');
+            }, 4000);
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.add('hidden');
+        }
+
+        // ==================== ANIMAZIONI CANVAS CON CONDIZIONI SOLO PER URANO ====================
+        function avviaAnimazione(tipo) {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100vw';
+            modal.style.height = '100vh';
+            modal.style.background = 'black';
+            modal.style.zIndex = '10000';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = 1600;
+            canvas.height = 800;
+            canvas.style.width = '95%';
+            canvas.style.height = '90%';
+            canvas.style.border = '4px solid #ffaa33';
+            canvas.style.borderRadius = '60px';
+            canvas.style.background = '#030614';
+            
+            const ctx = canvas.getContext('2d');
+            
+            let animTime = 0;
+            
+            function drawRealisticAnimation() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Sfondo spazio
+                ctx.fillStyle = '#030614';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Stelle
+                for (let i = 0; i < 100; i++) {
+                    let x = (i * 37) % canvas.width;
+                    let y = (i * 23) % canvas.height;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 1 + Math.sin(i)*0.5, 0, Math.PI*2);
+                    ctx.fill();
+                }
+                
+                // Titolo animazione
+                ctx.fillStyle = '#ffaa33';
+                ctx.font = 'bold 36px Arial';
+                ctx.fillText('CONDIZIONI SU URANO:', 100, 80);
+                
+                // Animazioni specifiche per tipo
+                if (tipo === 'VITA') {
+    // Condizioni per VITA su Urano
+    ctx.fillStyle = '#88ccff';
+    ctx.font = '24px Arial';
+    ctx.fillText('• Metano (CH₄): 35%', 100, 150);
+    ctx.fillText('• Temperatura: -120°C', 100, 190);
+    ctx.fillText('• Gravità: 8 m/s²', 100, 230);
+    ctx.fillText('• Presenza di CH₄ nell\'atmosfera', 100, 270);
+    ctx.fillText('• Assenza di acqua liquida superficiale', 100, 310);
+    
+    // Confronto TERRA (aggiunto)
+    ctx.fillStyle = '#88ccff';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
+    ctx.font = '24px Arial';
+    ctx.fillText('• Metano: 0.0002%', canvas.width - 400, 190);
+    ctx.fillText('• Temperatura media: 15°C', canvas.width - 400, 230);
+    ctx.fillText('• Gravità: 9.8 m/s²', canvas.width - 400, 270);
+    ctx.fillText('• Acqua liquida: ABBONDANTE', canvas.width - 400, 310);
+    ctx.fillText('• Vita: PRESENTE', canvas.width - 400, 350);
+    ctx.fillText('• Batteri metanogeni: ESISTONO', canvas.width - 400, 390);
+    
+    ctx.fillStyle = '#ffaa33';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('→ Su Urano servirebbero queste condizioni', 100, 380);
+    ctx.fillText('per sviluppare batteri metanogeni', 100, 420);
+    
+    // Animazione
+    ctx.fillStyle = '#228833';
+    ctx.font = 'bold 40px Arial';
+    ctx.fillText('🦠 VITA MICROBICA (IPOTETICA)', 600, 500);
+    
+    for (let i = 0; i < 15; i++) {
+        let x = 500 + i * 40 + Math.sin(animTime*2 + i) * 20;
+        let y = 600 + Math.cos(animTime*3 + i) * 30;
+        
+        ctx.fillStyle = '#44dd88';
+        ctx.beginPath();
+        ctx.ellipse(x, y, 20, 12, 0, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.strokeStyle = '#88ffaa';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x + 20, y);
+        ctx.lineTo(x + 40, y - 8);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#ffff00';
+        ctx.beginPath();
+        ctx.arc(x - 8, y - 3, 5, 0, Math.PI*2);
+        ctx.fill();
+    }
+}
+                else if (tipo === 'VULCANI') {
+    // Condizioni per VULCANI su Urano
+    ctx.fillStyle = '#88ccff';
+    ctx.font = '24px Arial';
+    ctx.fillText('• Attività tettonica: presente', 100, 150);
+    ctx.fillText('• Calore interno: moderato', 100, 190);
+    ctx.fillText('• Criovulcanesimo (ghiaccio)', 100, 230);
+    ctx.fillText('• Eruzioni di acqua e ammoniaca', 100, 270);
+    
+    // Confronto TERRA (aggiunto)
+    ctx.fillStyle = '#88ccff';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
+    ctx.font = '24px Arial';
+    ctx.fillText('• Vulcani attivi: ~1500', canvas.width - 400, 190);
+    ctx.fillText('• Vulcani a scudo (Hawaii)', canvas.width - 400, 230);
+    ctx.fillText('• Stratovulcani (Vesuvio, Etna)', canvas.width - 400, 270);
+    ctx.fillText('• Lava basaltica (1200°C)', canvas.width - 400, 310);
+    ctx.fillText('• Criovulcani: NON ESISTONO', canvas.width - 400, 350);
+    
+    ctx.fillStyle = '#ffaa33';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('→ Su Urano esistono solo criovulcani', 100, 340);
+    ctx.fillText('(eruzioni di ghiaccio invece di lava)', 100, 380);
+    
+    ctx.fillStyle = '#ff5500';
+    ctx.font = 'bold 40px Arial';
+    ctx.fillText('🌋 CRIONULCANI', 700, 550);
+    
+    ctx.fillStyle = '#8B5A2B';
+    ctx.beginPath();
+    ctx.moveTo(700, 700);
+    ctx.lineTo(900, 700);
+    ctx.lineTo(800, 400);
+    ctx.closePath();
+    ctx.fill();
+    
+    for (let i = 0; i < 8; i++) {
+        let x = 750 + i * 15 + Math.sin(animTime*5 + i) * 15;
+        let y = 550 + i * 10 + Math.cos(animTime*3 + i) * 10;
+        ctx.fillStyle = '#88ccff';
+        ctx.beginPath();
+        ctx.arc(x, y, 12, 0, Math.PI*2);
+        ctx.fill();
+    }
+}
+                else if (tipo === 'ANELLI') {
+                    // Condizioni per ANELLI
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = '24px Arial';
+                    ctx.fillText('• Metano: 75%', 100, 150);
+                    ctx.fillText('• Temperatura: -230°C', 100, 190);
+                    ctx.fillText('• Velocità orbitale: 2.5 km/s', 100, 230);
+                    ctx.fillText('• Particelle di ghiaccio in sospensione', 100, 270);
+                    ctx.fillText('• Forze gravitazionali', 100, 310);
+                    
+                    ctx.fillStyle = '#ffaa33';
+                    ctx.font = 'bold 24px Arial';
+                    ctx.fillText('→ Il metano congela formando cristalli', 100, 380);
+                    ctx.fillText('che si dispongono in anelli', 100, 420);
+                    
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = 'bold 40px Arial';
+                    ctx.fillText('💎 ANELLI DI GHIACCIO', 650, 550);
+                    
+                    ctx.fillStyle = '#6bb4e0';
+                    ctx.beginPath();
+                    ctx.arc(800, 650, 100, 0, Math.PI*2);
+                    ctx.fill();
+                    
+                    for (let i = 0; i < 8; i++) {
+                        ctx.strokeStyle = '#aaddff';
+                        ctx.lineWidth = 8;
+                        ctx.beginPath();
+                        ctx.ellipse(800, 650, 180 + i*15, 50 + i*5, 0, 0, Math.PI*2);
+                        ctx.stroke();
+                    }
+                }
+                else if (tipo === 'OCEANO') {
+                    // Condizioni per OCEANO
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = '24px Arial';
+                    ctx.fillText('• Temperatura: -30°C', 100, 150);
+                    ctx.fillText('• Gravità: 12 m/s²', 100, 190);
+                    ctx.fillText('• Campo magnetico: 60 µT', 100, 230);
+                    ctx.fillText('• Acqua sotto alta pressione', 100, 270);
+                    ctx.fillText('• Presenza di ammoniaca', 100, 310);
+                    
+                    ctx.fillStyle = '#ffaa33';
+                    ctx.font = 'bold 24px Arial';
+                    ctx.fillText('→ L\'acqua rimane liquida in profondità', 100, 380);
+                    ctx.fillText('grazie alla pressione e ai sali', 100, 420);
+                    
+                    ctx.fillStyle = '#2299ff';
+                    ctx.font = 'bold 40px Arial';
+                    ctx.fillText('🌊 OCEANO SOTTERRANEO', 600, 550);
+                    
+                    ctx.fillStyle = '#4f8ab0';
+                    ctx.beginPath();
+                    ctx.arc(800, 650, 120, 0, Math.PI*2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#2277cc';
+                    ctx.beginPath();
+                    ctx.ellipse(800, 680, 80, 40, 0, 0, Math.PI*2);
+                    ctx.fill();
+                    
+                    for (let i = 0; i < 5; i++) {
+                        let x = 700 + i * 50 + Math.sin(animTime + i) * 10;
+                        let y = 680 + Math.cos(animTime*2 + i) * 10;
+                        ctx.fillStyle = '#ffcc00';
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x+20, y-10);
+                        ctx.lineTo(x, y-20);
+                        ctx.fill();
+                    }
+                }
+                else if (tipo === 'VULCANI') {
+                    // Condizioni per VULCANI
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = '24px Arial';
+                    ctx.fillText('• Attività tettonica: presente', 100, 150);
+                    ctx.fillText('• Calore interno: moderato', 100, 190);
+                    ctx.fillText('• Criovulcanesimo (ghiaccio)', 100, 230);
+                    ctx.fillText('• Eruzioni di acqua e ammoniaca', 100, 270);
+                    
+                    ctx.fillStyle = '#ffaa33';
+                    ctx.font = 'bold 24px Arial';
+                    ctx.fillText('→ Su Urano esistono criovulcani', 100, 340);
+                    ctx.fillText('che eruttano ghiaccio invece di lava', 100, 380);
+                    
+                    ctx.fillStyle = '#ff5500';
+                    ctx.font = 'bold 40px Arial';
+                    ctx.fillText('🌋 CRIONULCANI', 700, 550);
+                    
+                    ctx.fillStyle = '#8B5A2B';
+                    ctx.beginPath();
+                    ctx.moveTo(700, 700);
+                    ctx.lineTo(900, 700);
+                    ctx.lineTo(800, 400);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    for (let i = 0; i < 8; i++) {
+                        let x = 750 + i * 15 + Math.sin(animTime*5 + i) * 15;
+                        let y = 550 + i * 10 + Math.cos(animTime*3 + i) * 10;
+                        ctx.fillStyle = '#88ccff';
+                        ctx.beginPath();
+                        ctx.arc(x, y, 12, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                }
+                else if (tipo === 'ROCCE') {
+    // Condizioni per TIPI DI ROCCIA su Urano
+    ctx.fillStyle = '#88ccff';
+    ctx.font = '24px Arial';
+    ctx.fillText('• Nucleo roccioso (silicati, ferro)', 100, 150);
+    ctx.fillText('• Mantello di ghiacci (H₂O, NH₃, CH₄)', 100, 190);
+    ctx.fillText('• Crosta di ghiaccio', 100, 230);
+    ctx.fillText('• Rocce metamorfiche? Sconosciuto', 100, 270);
+    
+    // Confronto TERRA (aggiunto)
+    ctx.fillStyle = '#88ccff';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
+    ctx.font = '24px Arial';
+    ctx.fillText('• MAGMATICHE: granito, basalto', canvas.width - 400, 190);
+    ctx.fillText('• SEDIMENTARIE: arenaria, calcare', canvas.width - 400, 230);
+    ctx.fillText('• METAMORFICHE: marmo, ardesia', canvas.width - 400, 270);
+    ctx.fillText('• Tutti e tre i tipi presenti', canvas.width - 400, 310);
+    ctx.fillText('• Rocce sedimentarie: FOSSILI', canvas.width - 400, 350);
+    
+    ctx.fillStyle = '#ffaa33';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('→ Il nucleo di Urano è roccioso', 100, 340);
+    ctx.fillText('simile a quello terrestre', 100, 380);
+    
+    ctx.fillStyle = '#AA8866';
+    ctx.font = 'bold 40px Arial';
+    ctx.fillText('🪨 TIPI DI ROCCIA', 700, 550);
+    
+    // Rocce
+    ctx.fillStyle = '#8B5A2B';
+    ctx.beginPath();
+    ctx.arc(600, 650, 40, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '20px Arial';
+    ctx.fillText('Magmatiche', 550, 700);
+    
+    for (let i = 0; i < 4; i++) {
+        ctx.fillStyle = '#A0522D';
+        ctx.fillRect(720 + i*40, 620, 25, 60);
+    }
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('Sedimentarie', 720, 710);
+    
+    ctx.fillStyle = '#CD7F32';
+    ctx.beginPath();
+    ctx.arc(900, 650, 35, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('Metamorfiche', 850, 700);
+}
+                
+                animTime += 0.1;
+                requestAnimationFrame(drawRealisticAnimation);
+            }
+            
+            drawRealisticAnimation();
+            modal.appendChild(canvas);
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '✖ CHIUDI (ESC)';
+            closeBtn.style.position = 'absolute';
+            closeBtn.style.top = '30px';
+            closeBtn.style.right = '30px';
+            closeBtn.style.background = '#aa3344';
+            closeBtn.style.border = 'none';
+            closeBtn.style.color = 'white';
+            closeBtn.style.padding = '15px 30px';
+            closeBtn.style.borderRadius = '40px';
+            closeBtn.style.fontSize = '1.2rem';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.border = '2px solid #ff8888';
+            closeBtn.style.zIndex = '10001';
+            closeBtn.onclick = () => document.body.removeChild(modal);
+            
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                if (document.body.contains(modal)) {
+                    document.body.removeChild(modal);
+                }
+            }, 12000);
+        }
+
+        // Collega bottoni
+        document.getElementById('btnVita').addEventListener('click', () => avviaAnimazione('VITA'));
+        document.getElementById('btnAnelli').addEventListener('click', () => avviaAnimazione('ANELLI'));
+        document.getElementById('btnOceano').addEventListener('click', () => avviaAnimazione('OCEANO'));
+        document.getElementById('btnVulcani').addEventListener('click', () => avviaAnimazione('VULCANI'));
+        document.getElementById('btnRocce').addEventListener('click', () => avviaAnimazione('ROCCE'));
+
+        // ==================== MODALITÀ STORIA ====================
+        const storyModal = document.getElementById('storyModal');
+        const storyCanvas = document.getElementById('storyCanvas');
+        const storyCtx = storyCanvas.getContext('2d');
+        const storyPrev = document.getElementById('storyPrev');
+        const storyNext = document.getElementById('storyNext');
+        const closeStoryBtn = document.getElementById('closeStoryBtn');
+        const storyLauncher = document.getElementById('storyLauncher');
+        
+        let currentStoryScene = 0;
+        let storyTimeOffset = 0;
+        
+        const storyScenes = [
+            { 
+                title: '🌌 1. NEBULOSA SOLARE', 
+                desc: '4.6 MILIARDI DI ANNI FA',
+                details: 'Nube di gas e polveri collassa per gravità'
+            },
+            { 
+                title: '💫 2. DISCO PROTOPLANETARIO', 
+                desc: 'IL SOLE SI FORMA',
+                details: 'Intorno ruota un disco di materiale'
+            },
+            { 
+                title: '🧊 3. ACCREZIONE DI URANO', 
+                desc: 'FORMAZIONE DEL GIGANTE DI GHIACCIO',
+                details: 'Ghiacci e rocce si accumulano'
+            },
+            { 
+                title: '💥 4. IMPATTO GIGANTE', 
+                desc: 'INCLINAZIONE DELL\'ASSE',
+                details: 'Un corpo colpisce Urano inclinandolo a 98°'
+            },
+            { 
+                title: '🌀 5. URANO OGGI', 
+                desc: 'IL PIANETA ATTUALE',
+                details: '27 lune, anelli sottili, atmosfera di metano'
+            }
+        ];
+        
+        function drawStoryScene() {
+            storyCtx.clearRect(0, 0, storyCanvas.width, storyCanvas.height);
+            
+            const w = storyCanvas.width;
+            const h = storyCanvas.height;
+            
+            storyCtx.fillStyle = '#030614';
+            storyCtx.fillRect(0, 0, w, h);
+            
+            for (let i = 0; i < 100; i++) {
+                let x = (i * 37) % w;
+                let y = (i * 23) % h;
+                storyCtx.fillStyle = '#ffffff';
+                storyCtx.beginPath();
+                storyCtx.arc(x, y, 1, 0, Math.PI*2);
+                storyCtx.fill();
+            }
+            
+            if (currentStoryScene === 0) {
+                for (let i = 0; i < 150; i++) {
+                    let angle = i * 0.1 + storyTimeOffset * 0.5;
+                    let dist = 100 + (i % 5) * 50;
+                    let x = w/2 + Math.cos(angle) * dist;
+                    let y = h/2 + Math.sin(angle) * dist * 0.6;
+                    let gradient = storyCtx.createRadialGradient(x, y, 0, x+20, y+20, 30);
+                    gradient.addColorStop(0, '#a080ff');
+                    gradient.addColorStop(1, '#402080');
+                    storyCtx.fillStyle = gradient;
+                    storyCtx.beginPath();
+                    storyCtx.arc(x, y, 15 + Math.sin(i + storyTimeOffset)*5, 0, Math.PI*2);
+                    storyCtx.fill();
+                }
+            }
+            else if (currentStoryScene === 1) {
+                storyCtx.fillStyle = '#ffaa33';
+                storyCtx.beginPath();
+                storyCtx.arc(w/2, h/2, 60, 0, Math.PI*2);
+                storyCtx.fill();
+                for (let i = 0; i < 300; i++) {
+                    let angle = i * 0.02 + storyTimeOffset * 2;
+                    let dist = 150 + (i % 100);
+                    let x = w/2 + Math.cos(angle) * dist;
+                    let y = h/2 + Math.sin(angle) * dist * 0.3;
+                    storyCtx.fillStyle = '#c0a86d';
+                    storyCtx.beginPath();
+                    storyCtx.arc(x, y, 3 + Math.sin(i)*2, 0, Math.PI*2);
+                    storyCtx.fill();
+                }
+            }
+            else if (currentStoryScene === 2) {
+                for (let i = 0; i < 8; i++) {
+                    let angle = i * 0.8 + storyTimeOffset;
+                    let dist = 250;
+                    let x = w/2 + Math.cos(angle) * dist;
+                    let y = h/2 + Math.sin(angle) * dist * 0.5;
+                    storyCtx.fillStyle = '#a58e6d';
+                    storyCtx.beginPath();
+                    storyCtx.arc(x, y, 30 + Math.sin(i + storyTimeOffset)*5, 0, Math.PI*2);
+                    storyCtx.fill();
+                    storyCtx.fillStyle = '#aaddff';
+                    storyCtx.globalAlpha = 0.4;
+                    storyCtx.beginPath();
+                    storyCtx.arc(x, y, 50, 0, Math.PI*2);
+                    storyCtx.fill();
+                    storyCtx.globalAlpha = 1;
+                }
+            }
+            else if (currentStoryScene === 3) {
+                let impactX = w/2 + Math.sin(storyTimeOffset*3) * 200;
+                let impactY = h/2 + Math.cos(storyTimeOffset*2) * 100;
+                storyCtx.fillStyle = '#88aadd';
+                storyCtx.beginPath();
+                storyCtx.arc(w/2-50, h/2, 80, 0, Math.PI*2);
+                storyCtx.fill();
+                storyCtx.fillStyle = '#c07a4b';
+                storyCtx.beginPath();
+                storyCtx.arc(impactX, impactY, 60, 0, Math.PI*2);
+                storyCtx.fill();
+            }
+            else {
+                storyCtx.fillStyle = '#88ccff';
+                storyCtx.beginPath();
+                storyCtx.arc(w/2, h/2, 100, 0, Math.PI*2);
+                storyCtx.fill();
+                for (let i = 0; i < 8; i++) {
+                    storyCtx.strokeStyle = '#c0d0e0';
+                    storyCtx.lineWidth = 3;
+                    storyCtx.beginPath();
+                    storyCtx.ellipse(w/2, h/2, 150 + i*10, 30 + i*3, 0, 0, Math.PI*2);
+                    storyCtx.stroke();
+                }
+            }
+            
+            storyCtx.fillStyle = 'white';
+            storyCtx.font = 'bold 48px Arial';
+            storyCtx.fillText(storyScenes[currentStoryScene].title, 100, 100);
+            storyCtx.font = '32px Arial';
+            storyCtx.fillStyle = '#ffcc99';
+            storyCtx.fillText(storyScenes[currentStoryScene].desc, 100, 180);
+            storyCtx.font = '28px Arial';
+            storyCtx.fillStyle = '#aaddff';
+            storyCtx.fillText(storyScenes[currentStoryScene].details, 100, 650);
+            
+            requestAnimationFrame(drawStoryScene);
+        }
+        
+        storyLauncher.addEventListener('click', () => {
+            storyModal.classList.remove('hidden');
+            currentStoryScene = 0;
+            storyTimeOffset = 0;
+            drawStoryScene();
+        });
+        
+        storyPrev.addEventListener('click', () => {
+            currentStoryScene = (currentStoryScene - 1 + storyScenes.length) % storyScenes.length;
+        });
+        
+        storyNext.addEventListener('click', () => {
+            currentStoryScene = (currentStoryScene + 1) % storyScenes.length;
+        });
+        
+        closeStoryBtn.addEventListener('click', () => {
+            storyModal.classList.add('hidden');
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (!storyModal.classList.contains('hidden')) {
+                if (e.key === 'ArrowLeft') {
+                    currentStoryScene = (currentStoryScene - 1 + storyScenes.length) % storyScenes.length;
+                } else if (e.key === 'ArrowRight') {
+                    currentStoryScene = (currentStoryScene + 1) % storyScenes.length;
+                } else if (e.key === 'Escape') {
+                    storyModal.classList.add('hidden');
+                }
+            }
+        });
+        
+        setInterval(() => {
+            storyTimeOffset += 0.1;
+        }, 100);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
