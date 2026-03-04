@@ -241,7 +241,6 @@
         <div class="anim-btn" id="btnAnelli">💎 ANELLI DI GHIACCIO</div>
         <div class="anim-btn" id="btnOceano">🌊 OCEANO SOTTERRANEO</div>
         <div class="anim-btn" id="btnVulcani">🌋 VULCANI</div>
-        <div class="anim-btn" id="btnRocce">🪨 TIPI DI ROCCIA</div>
     </div>
     
     <!-- PULSANTE STORIA -->
@@ -633,105 +632,59 @@
                 
                 // Animazioni specifiche per tipo
                 if (tipo === 'VITA') {
-    // Condizioni per VITA su Urano
-    ctx.fillStyle = '#88ccff';
-    ctx.font = '24px Arial';
-    ctx.fillText('• Metano (CH₄): 35%', 100, 150);
-    ctx.fillText('• Temperatura: -120°C', 100, 190);
-    ctx.fillText('• Gravità: 8 m/s²', 100, 230);
-    ctx.fillText('• Presenza di CH₄ nell\'atmosfera', 100, 270);
-    ctx.fillText('• Assenza di acqua liquida superficiale', 100, 310);
-    
-    // Confronto TERRA (aggiunto)
-    ctx.fillStyle = '#88ccff';
-    ctx.font = 'bold 28px Arial';
-    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
-    ctx.font = '24px Arial';
-    ctx.fillText('• Metano: 0.0002%', canvas.width - 400, 190);
-    ctx.fillText('• Temperatura media: 15°C', canvas.width - 400, 230);
-    ctx.fillText('• Gravità: 9.8 m/s²', canvas.width - 400, 270);
-    ctx.fillText('• Acqua liquida: ABBONDANTE', canvas.width - 400, 310);
-    ctx.fillText('• Vita: PRESENTE', canvas.width - 400, 350);
-    ctx.fillText('• Batteri metanogeni: ESISTONO', canvas.width - 400, 390);
-    
-    ctx.fillStyle = '#ffaa33';
-    ctx.font = 'bold 24px Arial';
-    ctx.fillText('→ Su Urano servirebbero queste condizioni', 100, 380);
-    ctx.fillText('per sviluppare batteri metanogeni', 100, 420);
-    
-    // Animazione
-    ctx.fillStyle = '#228833';
-    ctx.font = 'bold 40px Arial';
-    ctx.fillText('🦠 VITA MICROBICA (IPOTETICA)', 600, 500);
-    
-    for (let i = 0; i < 15; i++) {
-        let x = 500 + i * 40 + Math.sin(animTime*2 + i) * 20;
-        let y = 600 + Math.cos(animTime*3 + i) * 30;
-        
-        ctx.fillStyle = '#44dd88';
-        ctx.beginPath();
-        ctx.ellipse(x, y, 20, 12, 0, 0, Math.PI*2);
-        ctx.fill();
-        
-        ctx.strokeStyle = '#88ffaa';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x + 20, y);
-        ctx.lineTo(x + 40, y - 8);
-        ctx.stroke();
-        
-        ctx.fillStyle = '#ffff00';
-        ctx.beginPath();
-        ctx.arc(x - 8, y - 3, 5, 0, Math.PI*2);
-        ctx.fill();
-    }
-}
-                else if (tipo === 'VULCANI') {
-    // Condizioni per VULCANI su Urano
-    ctx.fillStyle = '#88ccff';
-    ctx.font = '24px Arial';
-    ctx.fillText('• Attività tettonica: presente', 100, 150);
-    ctx.fillText('• Calore interno: moderato', 100, 190);
-    ctx.fillText('• Criovulcanesimo (ghiaccio)', 100, 230);
-    ctx.fillText('• Eruzioni di acqua e ammoniaca', 100, 270);
-    
-    // Confronto TERRA (aggiunto)
-    ctx.fillStyle = '#88ccff';
-    ctx.font = 'bold 28px Arial';
-    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
-    ctx.font = '24px Arial';
-    ctx.fillText('• Vulcani attivi: ~1500', canvas.width - 400, 190);
-    ctx.fillText('• Vulcani a scudo (Hawaii)', canvas.width - 400, 230);
-    ctx.fillText('• Stratovulcani (Vesuvio, Etna)', canvas.width - 400, 270);
-    ctx.fillText('• Lava basaltica (1200°C)', canvas.width - 400, 310);
-    ctx.fillText('• Criovulcani: NON ESISTONO', canvas.width - 400, 350);
-    
-    ctx.fillStyle = '#ffaa33';
-    ctx.font = 'bold 24px Arial';
-    ctx.fillText('→ Su Urano esistono solo criovulcani', 100, 340);
-    ctx.fillText('(eruzioni di ghiaccio invece di lava)', 100, 380);
-    
-    ctx.fillStyle = '#ff5500';
-    ctx.font = 'bold 40px Arial';
-    ctx.fillText('🌋 CRIONULCANI', 700, 550);
-    
-    ctx.fillStyle = '#8B5A2B';
-    ctx.beginPath();
-    ctx.moveTo(700, 700);
-    ctx.lineTo(900, 700);
-    ctx.lineTo(800, 400);
-    ctx.closePath();
-    ctx.fill();
-    
-    for (let i = 0; i < 8; i++) {
-        let x = 750 + i * 15 + Math.sin(animTime*5 + i) * 15;
-        let y = 550 + i * 10 + Math.cos(animTime*3 + i) * 10;
-        ctx.fillStyle = '#88ccff';
-        ctx.beginPath();
-        ctx.arc(x, y, 12, 0, Math.PI*2);
-        ctx.fill();
-    }
-}
+                    // Condizioni per VITA su Urano
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = '24px Arial';
+                    ctx.fillText('• Metano (CH₄): 35%', 100, 150);
+                    ctx.fillText('• Temperatura: -120°C', 100, 190);
+                    ctx.fillText('• Gravità: 8 m/s²', 100, 230);
+                    ctx.fillText('• Presenza di CH₄ nell\'atmosfera', 100, 270);
+                    ctx.fillText('• Assenza di acqua liquida superficiale', 100, 310);
+                    
+                    // Confronto TERRA
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = 'bold 28px Arial';
+                    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
+                    ctx.font = '24px Arial';
+                    ctx.fillText('• Metano: 0.0002%', canvas.width - 400, 190);
+                    ctx.fillText('• Temperatura media: 15°C', canvas.width - 400, 230);
+                    ctx.fillText('• Gravità: 9.8 m/s²', canvas.width - 400, 270);
+                    ctx.fillText('• Acqua liquida: ABBONDANTE', canvas.width - 400, 310);
+                    ctx.fillText('• Vita: PRESENTE', canvas.width - 400, 350);
+                    ctx.fillText('• Batteri metanogeni: ESISTONO', canvas.width - 400, 390);
+                    
+                    ctx.fillStyle = '#ffaa33';
+                    ctx.font = 'bold 24px Arial';
+                    ctx.fillText('→ Su Urano servirebbero queste condizioni', 100, 380);
+                    ctx.fillText('per sviluppare batteri metanogeni', 100, 420);
+                    
+                    // Animazione
+                    ctx.fillStyle = '#228833';
+                    ctx.font = 'bold 40px Arial';
+                    ctx.fillText('🦠 VITA MICROBICA (IPOTETICA)', 600, 500);
+                    
+                    for (let i = 0; i < 15; i++) {
+                        let x = 500 + i * 40 + Math.sin(animTime*2 + i) * 20;
+                        let y = 600 + Math.cos(animTime*3 + i) * 30;
+                        
+                        ctx.fillStyle = '#44dd88';
+                        ctx.beginPath();
+                        ctx.ellipse(x, y, 20, 12, 0, 0, Math.PI*2);
+                        ctx.fill();
+                        
+                        ctx.strokeStyle = '#88ffaa';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x + 20, y);
+                        ctx.lineTo(x + 40, y - 8);
+                        ctx.stroke();
+                        
+                        ctx.fillStyle = '#ffff00';
+                        ctx.beginPath();
+                        ctx.arc(x - 8, y - 3, 5, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                }
                 else if (tipo === 'ANELLI') {
                     // Condizioni per ANELLI
                     ctx.fillStyle = '#88ccff';
@@ -805,7 +758,7 @@
                     }
                 }
                 else if (tipo === 'VULCANI') {
-                    // Condizioni per VULCANI
+                    // Condizioni per VULCANI su Urano
                     ctx.fillStyle = '#88ccff';
                     ctx.font = '24px Arial';
                     ctx.fillText('• Attività tettonica: presente', 100, 150);
@@ -813,10 +766,21 @@
                     ctx.fillText('• Criovulcanesimo (ghiaccio)', 100, 230);
                     ctx.fillText('• Eruzioni di acqua e ammoniaca', 100, 270);
                     
+                    // Confronto TERRA
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = 'bold 28px Arial';
+                    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
+                    ctx.font = '24px Arial';
+                    ctx.fillText('• Vulcani attivi: ~1500', canvas.width - 400, 190);
+                    ctx.fillText('• Vulcani a scudo (Hawaii)', canvas.width - 400, 230);
+                    ctx.fillText('• Stratovulcani (Vesuvio, Etna)', canvas.width - 400, 270);
+                    ctx.fillText('• Lava basaltica (1200°C)', canvas.width - 400, 310);
+                    ctx.fillText('• Criovulcani: NON ESISTONO', canvas.width - 400, 350);
+                    
                     ctx.fillStyle = '#ffaa33';
                     ctx.font = 'bold 24px Arial';
-                    ctx.fillText('→ Su Urano esistono criovulcani', 100, 340);
-                    ctx.fillText('che eruttano ghiaccio invece di lava', 100, 380);
+                    ctx.fillText('→ Su Urano esistono solo criovulcani', 100, 340);
+                    ctx.fillText('(eruzioni di ghiaccio invece di lava)', 100, 380);
                     
                     ctx.fillStyle = '#ff5500';
                     ctx.font = 'bold 40px Arial';
@@ -839,58 +803,6 @@
                         ctx.fill();
                     }
                 }
-                else if (tipo === 'ROCCE') {
-    // Condizioni per TIPI DI ROCCIA su Urano
-    ctx.fillStyle = '#88ccff';
-    ctx.font = '24px Arial';
-    ctx.fillText('• Nucleo roccioso (silicati, ferro)', 100, 150);
-    ctx.fillText('• Mantello di ghiacci (H₂O, NH₃, CH₄)', 100, 190);
-    ctx.fillText('• Crosta di ghiaccio', 100, 230);
-    ctx.fillText('• Rocce metamorfiche? Sconosciuto', 100, 270);
-    
-    // Confronto TERRA (aggiunto)
-    ctx.fillStyle = '#88ccff';
-    ctx.font = 'bold 28px Arial';
-    ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
-    ctx.font = '24px Arial';
-    ctx.fillText('• MAGMATICHE: granito, basalto', canvas.width - 400, 190);
-    ctx.fillText('• SEDIMENTARIE: arenaria, calcare', canvas.width - 400, 230);
-    ctx.fillText('• METAMORFICHE: marmo, ardesia', canvas.width - 400, 270);
-    ctx.fillText('• Tutti e tre i tipi presenti', canvas.width - 400, 310);
-    ctx.fillText('• Rocce sedimentarie: FOSSILI', canvas.width - 400, 350);
-    
-    ctx.fillStyle = '#ffaa33';
-    ctx.font = 'bold 24px Arial';
-    ctx.fillText('→ Il nucleo di Urano è roccioso', 100, 340);
-    ctx.fillText('simile a quello terrestre', 100, 380);
-    
-    ctx.fillStyle = '#AA8866';
-    ctx.font = 'bold 40px Arial';
-    ctx.fillText('🪨 TIPI DI ROCCIA', 700, 550);
-    
-    // Rocce
-    ctx.fillStyle = '#8B5A2B';
-    ctx.beginPath();
-    ctx.arc(600, 650, 40, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '20px Arial';
-    ctx.fillText('Magmatiche', 550, 700);
-    
-    for (let i = 0; i < 4; i++) {
-        ctx.fillStyle = '#A0522D';
-        ctx.fillRect(720 + i*40, 620, 25, 60);
-    }
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText('Sedimentarie', 720, 710);
-    
-    ctx.fillStyle = '#CD7F32';
-    ctx.beginPath();
-    ctx.arc(900, 650, 35, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText('Metamorfiche', 850, 700);
-}
                 
                 animTime += 0.1;
                 requestAnimationFrame(drawRealisticAnimation);
@@ -925,12 +837,11 @@
             }, 12000);
         }
 
-        // Collega bottoni
+        // Collega bottoni (rimosso btnRocce)
         document.getElementById('btnVita').addEventListener('click', () => avviaAnimazione('VITA'));
         document.getElementById('btnAnelli').addEventListener('click', () => avviaAnimazione('ANELLI'));
         document.getElementById('btnOceano').addEventListener('click', () => avviaAnimazione('OCEANO'));
         document.getElementById('btnVulcani').addEventListener('click', () => avviaAnimazione('VULCANI'));
-        document.getElementById('btnRocce').addEventListener('click', () => avviaAnimazione('ROCCE'));
 
         // ==================== MODALITÀ STORIA ====================
         const storyModal = document.getElementById('storyModal');
