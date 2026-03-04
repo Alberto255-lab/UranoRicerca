@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URANO 3D RICERCA SCIENZE</title>
+    <title>URANO 3D • NOTIZIA NASA • VENTO SOLARE</title>
     <style>
         body {
             margin: 0;
@@ -27,6 +27,33 @@
             border: 2px solid rgba(255,200,100,0.3);
         }
         
+        /* PULSANTE TOGGLE PANNELLI (sempre visibile) */
+        .toggle-panels-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #1f4970;
+            border: 3px solid #ffaa33;
+            color: white;
+            font-size: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            cursor: pointer;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 20px #ffaa33;
+            transition: 0.2s;
+        }
+        
+        .toggle-panels-btn:hover {
+            background: #2f6ba0;
+            transform: scale(1.1);
+        }
+        
         /* PANNELLO CONTROLLI */
         .controls-panel {
             position: absolute;
@@ -41,6 +68,13 @@
             pointer-events: auto;
             z-index: 200;
             color: white;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        .controls-panel.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-100px);
         }
         
         .panel-title {
@@ -63,7 +97,7 @@
         .anim-panel {
             position: absolute;
             right: 20px;
-            top: 80px;
+            top: 100px;
             width: 280px;
             background: rgba(0, 8, 20, 0.95);
             backdrop-filter: blur(15px);
@@ -75,6 +109,13 @@
             pointer-events: auto;
             max-height: 80vh;
             overflow-y: auto;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        .anim-panel.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(100px);
         }
         
         .anim-title {
@@ -117,6 +158,13 @@
             z-index: 200;
             cursor: pointer;
             pointer-events: auto;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        .story-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(100px);
         }
         
         /* TOOLTIP */
@@ -224,10 +272,13 @@
     </style>
 </head>
 <body>
-    <div id="info">🌌 URANO 3D RICERCA SCIENZE</div>
+    <div id="info">🌌 URANO 3D • NOTIZIA NASA • VENTO SOLARE</div>
+    
+    <!-- PULSANTE TOGGLE PANNELLI (sempre visibile) -->
+    <div class="toggle-panels-btn" id="togglePanelsBtn">🔘</div>
     
     <!-- PANNELLO CONTROLLI -->
-    <div class="controls-panel">
+    <div class="controls-panel" id="controlsPanel">
         <div class="panel-title">⚡ VELOCITÀ REALI</div>
         <div class="info-text">🔄 ROTAZIONE: 17h 14m (fissa)</div>
         <div class="info-text">🌍 RIVOLUZIONE: 84 anni (fissa)</div>
@@ -235,12 +286,13 @@
     </div>
     
     <!-- PANNELLO ANIMAZIONI -->
-    <div class="anim-panel">
+    <div class="anim-panel" id="animPanel">
         <div class="anim-title">🎬 ANIMAZIONI SCIENTIFICHE</div>
         <div class="anim-btn" id="btnVita">🦠 VITA MICROBICA</div>
         <div class="anim-btn" id="btnAnelli">💎 ANELLI DI GHIACCIO</div>
         <div class="anim-btn" id="btnOceano">🌊 OCEANO SOTTERRANEO</div>
         <div class="anim-btn" id="btnVulcani">🌋 VULCANI</div>
+        <div class="anim-btn" id="btnNasa">🛰️ EVENTO NASA 1986</div>
     </div>
     
     <!-- PULSANTE STORIA -->
@@ -496,12 +548,35 @@
         
         animate();
 
-        // CLICK SU PIANETI (tooltip Urano si chiude solo al secondo clic)
+        // TOGGLE PANNELLI (nasconde/mostra tutti i pannelli tranne il pulsante)
+        const toggleBtn = document.getElementById('togglePanelsBtn');
+        const controlsPanel = document.getElementById('controlsPanel');
+        const animPanel = document.getElementById('animPanel');
+        const storyBtn = document.getElementById('storyLauncher');
+        
+        let panelsVisible = true;
+        
+        toggleBtn.addEventListener('click', () => {
+            if (panelsVisible) {
+                controlsPanel.classList.add('hidden');
+                animPanel.classList.add('hidden');
+                storyBtn.classList.add('hidden');
+                toggleBtn.textContent = '◉';
+                toggleBtn.style.background = '#aa3344';
+            } else {
+                controlsPanel.classList.remove('hidden');
+                animPanel.classList.remove('hidden');
+                storyBtn.classList.remove('hidden');
+                toggleBtn.textContent = '🔘';
+                toggleBtn.style.background = '#1f4970';
+            }
+            panelsVisible = !panelsVisible;
+        });
+
+        // CLICK SU PIANETI
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         let uranusTooltipVisible = false;
-        let currentUranusTooltipX = 0;
-        let currentUranusTooltipY = 0;
 
         renderer.domElement.addEventListener('click', (event) => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -520,13 +595,10 @@
                 } else {
                     const planetName = hit.userData.name;
                     if (planetName === 'URANO') {
-                        // Toggle per Urano
                         if (uranusTooltipVisible) {
                             hideTooltip();
                             uranusTooltipVisible = false;
                         } else {
-                            currentUranusTooltipX = event.clientX;
-                            currentUranusTooltipY = event.clientY;
                             showUranusTooltip(event.clientX, event.clientY);
                             uranusTooltipVisible = true;
                         }
@@ -537,10 +609,8 @@
             }
         });
 
-        // Aggiorna posizione tooltip di Urano mentre si muove (ogni frame)
         function updateUranusTooltipPosition() {
             if (uranusTooltipVisible && uranus) {
-                // Aggiorna posizione del tooltip seguendo Urano
                 const vector = new THREE.Vector3();
                 uranus.getWorldPosition(vector);
                 vector.project(camera);
@@ -581,9 +651,15 @@
             tooltip.classList.add('hidden');
         }
 
-        // ==================== ANIMAZIONI CANVAS CON CONDIZIONI SOLO PER URANO ====================
+        // ==================== ANIMAZIONI CANVAS (NON SI CHIUDONO AUTOMATICAMENTE) ====================
+        let modalRef = null;
+        
         function avviaAnimazione(tipo) {
+            // Se c'è già una modale aperta, non fare nulla
+            if (modalRef) return;
+            
             const modal = document.createElement('div');
+            modalRef = modal;
             modal.style.position = 'fixed';
             modal.style.top = '0';
             modal.style.left = '0';
@@ -607,6 +683,7 @@
             const ctx = canvas.getContext('2d');
             
             let animTime = 0;
+            let animationFrame;
             
             function drawRealisticAnimation() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -630,9 +707,7 @@
                 ctx.font = 'bold 36px Arial';
                 ctx.fillText('CONDIZIONI SU URANO:', 100, 80);
                 
-                // Animazioni specifiche per tipo
                 if (tipo === 'VITA') {
-                    // Condizioni per VITA su Urano
                     ctx.fillStyle = '#88ccff';
                     ctx.font = '24px Arial';
                     ctx.fillText('• Metano (CH₄): 35%', 100, 150);
@@ -641,7 +716,6 @@
                     ctx.fillText('• Presenza di CH₄ nell\'atmosfera', 100, 270);
                     ctx.fillText('• Assenza di acqua liquida superficiale', 100, 310);
                     
-                    // Confronto TERRA
                     ctx.fillStyle = '#88ccff';
                     ctx.font = 'bold 28px Arial';
                     ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
@@ -650,15 +724,13 @@
                     ctx.fillText('• Temperatura media: 15°C', canvas.width - 400, 230);
                     ctx.fillText('• Gravità: 9.8 m/s²', canvas.width - 400, 270);
                     ctx.fillText('• Acqua liquida: ABBONDANTE', canvas.width - 400, 310);
-                    ctx.fillText('• Vita: PRESENTE', canvas.width - 400, 350);
-                    ctx.fillText('• Batteri metanogeni: ESISTONO', canvas.width - 400, 390);
+                    ctx.fillText('• Batteri metanogeni: ESISTONO', canvas.width - 400, 350);
                     
                     ctx.fillStyle = '#ffaa33';
                     ctx.font = 'bold 24px Arial';
                     ctx.fillText('→ Su Urano servirebbero queste condizioni', 100, 380);
                     ctx.fillText('per sviluppare batteri metanogeni', 100, 420);
                     
-                    // Animazione
                     ctx.fillStyle = '#228833';
                     ctx.font = 'bold 40px Arial';
                     ctx.fillText('🦠 VITA MICROBICA (IPOTETICA)', 600, 500);
@@ -666,19 +738,15 @@
                     for (let i = 0; i < 15; i++) {
                         let x = 500 + i * 40 + Math.sin(animTime*2 + i) * 20;
                         let y = 600 + Math.cos(animTime*3 + i) * 30;
-                        
                         ctx.fillStyle = '#44dd88';
                         ctx.beginPath();
                         ctx.ellipse(x, y, 20, 12, 0, 0, Math.PI*2);
                         ctx.fill();
-                        
                         ctx.strokeStyle = '#88ffaa';
-                        ctx.lineWidth = 2;
                         ctx.beginPath();
                         ctx.moveTo(x + 20, y);
                         ctx.lineTo(x + 40, y - 8);
                         ctx.stroke();
-                        
                         ctx.fillStyle = '#ffff00';
                         ctx.beginPath();
                         ctx.arc(x - 8, y - 3, 5, 0, Math.PI*2);
@@ -686,14 +754,12 @@
                     }
                 }
                 else if (tipo === 'ANELLI') {
-                    // Condizioni per ANELLI
                     ctx.fillStyle = '#88ccff';
                     ctx.font = '24px Arial';
                     ctx.fillText('• Metano: 75%', 100, 150);
                     ctx.fillText('• Temperatura: -230°C', 100, 190);
                     ctx.fillText('• Velocità orbitale: 2.5 km/s', 100, 230);
                     ctx.fillText('• Particelle di ghiaccio in sospensione', 100, 270);
-                    ctx.fillText('• Forze gravitazionali', 100, 310);
                     
                     ctx.fillStyle = '#ffaa33';
                     ctx.font = 'bold 24px Arial';
@@ -718,19 +784,17 @@
                     }
                 }
                 else if (tipo === 'OCEANO') {
-                    // Condizioni per OCEANO
                     ctx.fillStyle = '#88ccff';
                     ctx.font = '24px Arial';
                     ctx.fillText('• Temperatura: -30°C', 100, 150);
                     ctx.fillText('• Gravità: 12 m/s²', 100, 190);
                     ctx.fillText('• Campo magnetico: 60 µT', 100, 230);
                     ctx.fillText('• Acqua sotto alta pressione', 100, 270);
-                    ctx.fillText('• Presenza di ammoniaca', 100, 310);
                     
                     ctx.fillStyle = '#ffaa33';
                     ctx.font = 'bold 24px Arial';
                     ctx.fillText('→ L\'acqua rimane liquida in profondità', 100, 380);
-                    ctx.fillText('grazie alla pressione e ai sali', 100, 420);
+                    ctx.fillText('grazie alla pressione', 100, 420);
                     
                     ctx.fillStyle = '#2299ff';
                     ctx.font = 'bold 40px Arial';
@@ -745,20 +809,8 @@
                     ctx.beginPath();
                     ctx.ellipse(800, 680, 80, 40, 0, 0, Math.PI*2);
                     ctx.fill();
-                    
-                    for (let i = 0; i < 5; i++) {
-                        let x = 700 + i * 50 + Math.sin(animTime + i) * 10;
-                        let y = 680 + Math.cos(animTime*2 + i) * 10;
-                        ctx.fillStyle = '#ffcc00';
-                        ctx.beginPath();
-                        ctx.moveTo(x, y);
-                        ctx.lineTo(x+20, y-10);
-                        ctx.lineTo(x, y-20);
-                        ctx.fill();
-                    }
                 }
                 else if (tipo === 'VULCANI') {
-                    // Condizioni per VULCANI su Urano
                     ctx.fillStyle = '#88ccff';
                     ctx.font = '24px Arial';
                     ctx.fillText('• Attività tettonica: presente', 100, 150);
@@ -766,21 +818,18 @@
                     ctx.fillText('• Criovulcanesimo (ghiaccio)', 100, 230);
                     ctx.fillText('• Eruzioni di acqua e ammoniaca', 100, 270);
                     
-                    // Confronto TERRA
                     ctx.fillStyle = '#88ccff';
                     ctx.font = 'bold 28px Arial';
                     ctx.fillText('SULLA TERRA:', canvas.width - 400, 150);
                     ctx.font = '24px Arial';
                     ctx.fillText('• Vulcani attivi: ~1500', canvas.width - 400, 190);
                     ctx.fillText('• Vulcani a scudo (Hawaii)', canvas.width - 400, 230);
-                    ctx.fillText('• Stratovulcani (Vesuvio, Etna)', canvas.width - 400, 270);
-                    ctx.fillText('• Lava basaltica (1200°C)', canvas.width - 400, 310);
-                    ctx.fillText('• Criovulcani: NON ESISTONO', canvas.width - 400, 350);
+                    ctx.fillText('• Stratovulcani (Vesuvio)', canvas.width - 400, 270);
+                    ctx.fillText('• Criovulcani: NON ESISTONO', canvas.width - 400, 310);
                     
                     ctx.fillStyle = '#ffaa33';
                     ctx.font = 'bold 24px Arial';
                     ctx.fillText('→ Su Urano esistono solo criovulcani', 100, 340);
-                    ctx.fillText('(eruzioni di ghiaccio invece di lava)', 100, 380);
                     
                     ctx.fillStyle = '#ff5500';
                     ctx.font = 'bold 40px Arial';
@@ -803,9 +852,54 @@
                         ctx.fill();
                     }
                 }
+                else if (tipo === 'NASA') {
+                    // Animazione speciale basata sulla notizia NASA
+                    ctx.fillStyle = '#ffaa33';
+                    ctx.font = 'bold 48px Arial';
+                    ctx.fillText('🛰️ EVENTO NASA - VOYAGER 2 (1986)', 400, 100);
+                    
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = '28px Arial';
+                    ctx.fillText('• 24 gennaio 1986: Voyager 2 sorvola Urano', 150, 180);
+                    ctx.fillText('• Vento solare estremo: evento che si verifica', 150, 230);
+                    ctx.fillText('  solo nel 4% delle volte', 150, 270);
+                    ctx.fillText('• La magnetosfera viene compressa', 150, 320);
+                    ctx.fillText('• Plasma espulso, radiazioni iniettate', 150, 370);
+                    ctx.fillText('• Distanza da Urano: 2.9 miliardi di km', 150, 420);
+                    ctx.fillText('• Missione prioritaria NASA in futuro', 150, 470);
+                    
+                    // Animazione vento solare
+                    for (let i = 0; i < 30; i++) {
+                        let x = 800 + i * 20 + Math.sin(animTime*3 + i) * 30;
+                        let y = 600 + Math.cos(animTime*2 + i) * 20;
+                        
+                        ctx.fillStyle = '#ffaa33';
+                        ctx.beginPath();
+                        ctx.arc(x, y, 6, 0, Math.PI*2);
+                        ctx.fill();
+                        
+                        ctx.strokeStyle = '#ffaa33';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x - 25, y - 10);
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                    }
+                    
+                    // Magnetosfera di Urano
+                    ctx.strokeStyle = '#88ccff';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.ellipse(600, 600, 150, 80, 0, 0, Math.PI*2);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#88ccff';
+                    ctx.font = '24px Arial';
+                    ctx.fillText('Magnetosfera compressa', 450, 550);
+                }
                 
                 animTime += 0.1;
-                requestAnimationFrame(drawRealisticAnimation);
+                animationFrame = requestAnimationFrame(drawRealisticAnimation);
             }
             
             drawRealisticAnimation();
@@ -825,23 +919,66 @@
             closeBtn.style.cursor = 'pointer';
             closeBtn.style.border = '2px solid #ff8888';
             closeBtn.style.zIndex = '10001';
-            closeBtn.onclick = () => document.body.removeChild(modal);
             
+            const closeModal = () => {
+                if (modalRef) {
+                    cancelAnimationFrame(animationFrame);
+                    document.body.removeChild(modalRef);
+                    modalRef = null;
+                }
+            };
+            
+            closeBtn.onclick = closeModal;
             modal.appendChild(closeBtn);
+            
+            // Aggiungi anche un piccolo pulsante in alto a sinistra per scena successiva (opzionale)
+            const nextSceneBtn = document.createElement('button');
+            nextSceneBtn.textContent = '▶ PROSSIMA SCENA';
+            nextSceneBtn.style.position = 'absolute';
+            nextSceneBtn.style.top = '30px';
+            nextSceneBtn.style.left = '30px';
+            nextSceneBtn.style.background = '#1f4970';
+            nextSceneBtn.style.border = '2px solid #88aaff';
+            nextSceneBtn.style.color = 'white';
+            nextSceneBtn.style.padding = '15px 30px';
+            nextSceneBtn.style.borderRadius = '40px';
+            nextSceneBtn.style.fontSize = '1.2rem';
+            nextSceneBtn.style.cursor = 'pointer';
+            nextSceneBtn.style.zIndex = '10001';
+            
+            // Per ora non implementiamo il cambio scena, ma lo lasciamo come placeholder
+            nextSceneBtn.onclick = () => {
+                alert('Funzionalità in sviluppo');
+            };
+            
+            modal.appendChild(nextSceneBtn);
+            
             document.body.appendChild(modal);
             
-            setTimeout(() => {
-                if (document.body.contains(modal)) {
-                    document.body.removeChild(modal);
-                }
-            }, 12000);
+            // Non c'è più setTimeout che chiude automaticamente
         }
 
-        // Collega bottoni (rimosso btnRocce)
+        // Collega bottoni
         document.getElementById('btnVita').addEventListener('click', () => avviaAnimazione('VITA'));
         document.getElementById('btnAnelli').addEventListener('click', () => avviaAnimazione('ANELLI'));
         document.getElementById('btnOceano').addEventListener('click', () => avviaAnimazione('OCEANO'));
         document.getElementById('btnVulcani').addEventListener('click', () => avviaAnimazione('VULCANI'));
+        document.getElementById('btnNasa').addEventListener('click', () => avviaAnimazione('NASA'));
+
+        // Gestione tasto ESC per chiudere la modale
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalRef) {
+                const closeBtn = modalRef.querySelector('button');
+                if (closeBtn) closeBtn.click();
+            }
+            
+            // Gestione ESC per modale storia
+            if (!storyModal.classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    storyModal.classList.add('hidden');
+                }
+            }
+        });
 
         // ==================== MODALITÀ STORIA ====================
         const storyModal = document.getElementById('storyModal');
@@ -1014,8 +1151,6 @@
                     currentStoryScene = (currentStoryScene - 1 + storyScenes.length) % storyScenes.length;
                 } else if (e.key === 'ArrowRight') {
                     currentStoryScene = (currentStoryScene + 1) % storyScenes.length;
-                } else if (e.key === 'Escape') {
-                    storyModal.classList.add('hidden');
                 }
             }
         });
